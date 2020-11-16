@@ -1,3 +1,4 @@
 venv
+__pycache__
 config.py
 2020-01-01 NPR Scrobbler Last.fm API Key.pdf
