@@ -1,4 +1,5 @@
-import requests, bs4, pylast, time, datetime, tabulate, config
+import requests, bs4, pylast, time, datetime, tabulate
+from config import *
 
 # Change to make this actually scrobble
 TESTING = False
