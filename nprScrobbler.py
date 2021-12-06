@@ -26,10 +26,15 @@ def check_artist(artist):
 def check_track(track_name, artist):
     track = pylast.Track(artist, track_name, network)
     corrected_track_name = track.get_correction()
+    print(f'corrected_track_name: {corrected_track_name}')
     if (track_name == corrected_track_name):
         # No change, return immediately and don't waste server hits
         return [track_name, track]
     corrected_track = pylast.Track(artist, corrected_track_name, network)
+    print(f'corrected_track: {corrected_track}')
+    if not corrected_track:
+        print(f'no server response for {artist} {corrected_track_name}, error')
+        exit()
     if (corrected_track != track):
         response = input("Should song "+track_name+" be "+corrected_track_name+"? (y/N) ").lower()
         if (response == "y"):
@@ -196,18 +201,61 @@ else:
     print("Not an NPR website, this functionality is not available yet.")
     exit() 
 
-# Print table of newSongs
-print(tabulate.tabulate(newSongs, headers=["Song","Artist","Album","Listener Count"]))
 
 # Scrobble newSongs
+def scrobble_songs(newSongs):
+    # Print table of newSongs
+    print(tabulate.tabulate(newSongs, headers=["Song","Artist","Album","Listener Count"]))
 
-response = input("Scrobble these? (Y/n)").lower()
-if TESTING:
-    print("TESTING flag set, scrobbles will not be sent.")
-elif response == "n":
-    exit()
-else:
-    print("Scrobbling...")
-    for s in newSongs:
-        network.scrobble(title=s[0], artist=s[1], album=s[2], timestamp=int(time.mktime(datetime.datetime.now().timetuple())))
-    print("Succesful!")
+    response = input("Scrobble these? (Y/n)").lower()
+    if response == "n":
+        response = input('[E]dit or [q]uit?').lower()
+        if response == "q":
+            exit()
+        else:
+            try:
+                response = int(input('Edit which # in table? (starts at 0)'))
+            except:
+                print("Not a number, try again")
+                try:
+                   response = int(input('Edit which # in table? (starts at 0)'))
+                except:
+                    print("Giving up")
+                    exit()
+
+            newSongs = edit_song(newSongs, response)
+            scrobble_songs(newSongs)
+            return
+    else:
+        if TESTING:
+            print("TESTING flag set, scrobbles will not be sent.")
+            exit()
+        print("Scrobbling...")
+        for s in newSongs:
+            network.scrobble(title=s[0], artist=s[1], album=s[2], timestamp=int(time.mktime(datetime.datetime.now().timetuple())))
+        print("Succesful!")
+        exit()
+
+def edit_song(newSongs, n):
+    (song, artist, album, count) = newSongs[n]
+    response = input('Edit [a]rtist, al[b]um, or [s]ong?').lower()
+    if response == 'a':
+        artist = input('New artist name:')
+    elif response == 'b':
+        album = input('New artist name:')
+    elif response == 's':
+        song = input('New song name:')
+
+    response = input('[S]crobble or [e]dit this track further?').lower()
+    if response == 'e':
+        edit_song(newSongs, n)
+        return
+    else:
+        (song, track) = check_track(song, artist)
+        if not song:
+            return
+        count = track.get_listener_count()
+        newSongs[n] = [song, artist, album, count]
+        return newSongs
+
+scrobble_songs(newSongs)
