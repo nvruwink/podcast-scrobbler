@@ -118,6 +118,9 @@ def get_tracks_guestdj(newMusic):
     # Process list into songs, artists, and albums
     # Entries appear to be in the form:
     # 3. Artist: "Track Title" from <em>Album Title</em>
+    #
+    # Update 2021/12/05 - a late 2020 post had no numbers for the songs, need to parse:
+    # Artist: "Track Title" from <em>Album Title</em>
     for e in featuredList:
         print("entry: "+e.getText())
         # Albums are inside <em> tags, grab them first using HTML parsing. Sometimes we may be missing an album title, e.g. for a single...
@@ -131,7 +134,11 @@ def get_tracks_guestdj(newMusic):
         # Artists and track names are only indicated with literal characters, need to be parsed out of the pure text.
         e = e.getText()
         # Remove the number, period, and space from the beginning of the string
-        (_, e) = e.split(". ",1)
+        import re
+        p = re.compile('\d+\. ')
+        if p.match(e):
+            (_, e) = e.split(". ",1)
+        
         # Strip the artist name from before the colon, leave the rest of the text in the buffer to be processed for track names
         (artist, e) = e.split(": ",1)
         artist = check_artist(artist)
