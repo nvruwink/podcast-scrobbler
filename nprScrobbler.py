@@ -121,6 +121,9 @@ def get_tracks_guestdj(newMusic):
     #
     # Update 2021/12/05 - a late 2020 post had no numbers for the songs, need to parse:
     # Artist: "Track Title" from <em>Album Title</em>
+    #
+    # Sometimes there is no album listed, and sometimes this form uses a comma instead of colon to separate artist and track
+
     for e in featuredList:
         print("entry: "+e.getText())
         # Albums are inside <em> tags, grab them first using HTML parsing. Sometimes we may be missing an album title, e.g. for a single...
@@ -139,8 +142,14 @@ def get_tracks_guestdj(newMusic):
         if p.match(e):
             (_, e) = e.split(". ",1)
         
-        # Strip the artist name from before the colon, leave the rest of the text in the buffer to be processed for track names
-        (artist, e) = e.split(": ",1)
+        # Strip the artist name from before the colon or comma, leave the rest of the text in the buffer to be processed for track names
+        if ':' in e:
+            (artist, e) = e.split(": ",1)
+        elif ',' in e:
+            (artist, e) = e.split(", ",1)
+        else:
+            artist = e
+
         artist = check_artist(artist)
         if not artist:
             continue
