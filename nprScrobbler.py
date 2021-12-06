@@ -1,7 +1,7 @@
 import requests, bs4, pylast, time, datetime, tabulate
 from config import *
 
-# Change to make this actually scrobble
+# Change to False to make this actually scrobble
 TESTING = False
 if TESTING:
     print("=========== TESTING! Will not scrobble ==========")
