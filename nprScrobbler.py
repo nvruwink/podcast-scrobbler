@@ -25,7 +25,7 @@ def check_artist(artist):
 # Check album - takes strings, returns string
 def check_album(artist, album):
     album_object = network.get_album(artist, album)
-    corrected_album_name = album_object.get_correction()
+    corrected_album_name = pylast._extract(album_object._request(album_object.ws_prefix + ".getCorrection"), "name")
     if (album == corrected_album_name):
         # No change, return immediately and don't waste server hits
         return album
@@ -35,7 +35,10 @@ def check_album(artist, album):
         if (response == "y"):
             album =  corrected_album_name
     elif (album != corrected_album_name):
-        print("Suggested album name correction does not affect scrobble, ignoring.")
+        print(f"Suggested album name correction {corrected_album_name} does not affect scrobble, recommend ignoring.")
+        response = input(f'Should album {album} be {corrected_album_name}? (y/N)').lower()
+        if (response == "y"):
+            album =  corrected_album_name
     return album
     
 
