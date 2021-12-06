@@ -264,7 +264,7 @@ def edit_song(newSongs, n):
     if response == 'a':
         artist = input('New artist name:')
     elif response == 'b':
-        album = input('New artist name:')
+        album = input('New album name:')
     elif response == 's':
         song = input('New song name:')
 
