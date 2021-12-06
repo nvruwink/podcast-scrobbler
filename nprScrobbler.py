@@ -46,12 +46,10 @@ def check_album(artist, album):
 def check_track(track_name, artist):
     track = pylast.Track(artist, track_name, network)
     corrected_track_name = track.get_correction()
-    print(f'corrected_track_name: {corrected_track_name}')
     if (track_name == corrected_track_name):
         # No change, return immediately and don't waste server hits
         return [track_name, track]
     corrected_track = pylast.Track(artist, corrected_track_name, network)
-    print(f'corrected_track: {corrected_track}')
     if not corrected_track:
         print(f'no server response for {artist} {corrected_track_name}, error')
         exit()
