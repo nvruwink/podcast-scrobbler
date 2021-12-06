@@ -22,6 +22,23 @@ def check_artist(artist):
         print("Suggested artist name correction does not affect scrobble, ignoring.")
     return artist
 
+# Check album - takes strings, returns string
+def check_album(artist, album):
+    album_object = network.get_album(artist, album)
+    corrected_album_name = album_object.get_correction()
+    if (album == corrected_album_name):
+        # No change, return immediately and don't waste server hits
+        return album
+    corrected_album_object = network.get_album(artist, album)
+    if (album_object != corrected_album_object):
+        response = input(f'Should album {album} be {corrected_album_name}? (y/N)').lower()
+        if (response == "y"):
+            album =  corrected_album_name
+    elif (album != corrected_album_name):
+        print("Suggested album name correction does not affect scrobble, ignoring.")
+    return album
+    
+
 # Check track - takes strings, returns duple of string track name and Track object to avoid hitting the server multiple times
 def check_track(track_name, artist):
     track = pylast.Track(artist, track_name, network)
@@ -94,6 +111,8 @@ def get_tracks_friday(newMusic):
         if not artist:
             continue
 
+        album = check_album(artist, album)
+
         # Sometimes more than one song is featured from a single artist -
         # they should have double quotes surrounding them, but this may not be consistent.
         # 
@@ -158,6 +177,8 @@ def get_tracks_guestdj(newMusic):
         artist = check_artist(artist)
         if not artist:
             continue
+        
+        album = check_album(artist, album)
 
         # Sometimes more than one song is featured from a single artist -
         # they should have double quotes surrounding them, but this may not be consistent.
