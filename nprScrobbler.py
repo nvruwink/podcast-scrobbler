@@ -10,6 +10,9 @@ if TESTING:
 def check_artist(artist):
     artist_object = pylast.Artist(artist, network)
     corrected_artist_name = artist_object.get_correction()
+    if not corrected_artist_name:
+        print('No suggested artist.')
+        return artist
     if (artist == corrected_artist_name):
         # No change, return immediately and don't waste server hits
         return artist
@@ -46,20 +49,25 @@ def check_album(artist, album):
 def check_track(track_name, artist):
     track = pylast.Track(artist, track_name, network)
     corrected_track_name = track.get_correction()
-    if (track_name == corrected_track_name):
-        # No change, return immediately and don't waste server hits
-        return [track_name, track]
-    corrected_track = pylast.Track(artist, corrected_track_name, network)
-    if not corrected_track:
-        print(f'no server response for {artist} {corrected_track_name}, error')
-        exit()
-    if (corrected_track != track):
-        response = input("Should song "+track_name+" be "+corrected_track_name+"? (y/N) ").lower()
-        if (response == "y"):
-            track_name = corrected_track_name
-            track = corrected_track
-    elif (track_name != corrected_track_name):
-        print("Suggested song name correction does not affect scrobble, ignoring.")
+    if not corrected_track_name:
+        print('No suggested track name.')
+    elif (track_name == corrected_track_name):
+        # No change, jump to test immediately and don't waste server hits
+        #return [track_name, track]
+        pass
+    else:
+        corrected_track = pylast.Track(artist, corrected_track_name, network)
+        if not corrected_track:
+            print(f'no server response for {artist} {corrected_track_name}, error')
+            exit()
+        if (corrected_track != track):
+            response = input("Should song "+track_name+" be "+corrected_track_name+"? (y/N) ").lower()
+            if (response == "y"):
+                track_name = corrected_track_name
+                track = corrected_track
+        elif (track_name != corrected_track_name):
+            print("Suggested song name correction does not affect scrobble, ignoring.")
+
     # Test track for errors
     try:
         track.get_listener_count()
@@ -99,6 +107,9 @@ def get_tracks_friday(newMusic):
 
         # Artists and track names are only indicated with literal characters, need to be parsed out of the pure text.
         e = e.getText()
+        # Sometimes an "11th" featured album is featured with the text "Bonus Album: " at the beginning
+        if 'Bonus Album: ' in e:
+            (_, e) = e.split('Bonus Album: ',1)
         # Strip the artist name from before the dash, leave the rest of the text in the buffer to be processed for track names
         # Apparently sometimes the intern uses a hyphen instead of a dash :(
         if " — " in e:
