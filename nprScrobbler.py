@@ -29,6 +29,9 @@ def check_artist(artist):
 def check_album(artist, album):
     album_object = network.get_album(artist, album)
     corrected_album_name = pylast._extract(album_object._request(album_object.ws_prefix + ".getCorrection"), "name")
+    if not corrected_album_name:
+        print('No suggested album.')
+        return album
     if (album == corrected_album_name):
         # No change, return immediately and don't waste server hits
         return album
