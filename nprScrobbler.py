@@ -101,6 +101,14 @@ def get_tracks_friday(newMusic):
     print("Looks like a New Friday site.")
     # Based on visual inspection of 2 results, all featured songs are listed as li elements inside an ol element
     featuredList = newMusic.select('ol > li')
+    if not featuredList:
+        featuredList = newMusic.select_one('[class~=edTag]').select('p')
+
+    print(featuredList)
+
+    if not featuredList:
+        print('Error: no songs?!')
+        exit()
 
     # Save each song in a list of lists. Form will be [[song0, artist0, album0],[song1, artist1, album1],...]
 
