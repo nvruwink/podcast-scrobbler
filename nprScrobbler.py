@@ -18,7 +18,7 @@ def check_artist(artist):
         return artist
     corrected_artist_object = pylast.Artist(corrected_artist_name, network)
     if (artist_object != corrected_artist_object):
-        response = input("Should artist "+artist+" be "+corrected_artist_name+"? (y/N)").lower()
+        response = input(f"Should artist {artist} be {corrected_artist_name}? (y/N)").lower()
         if (response == "y"):
             artist = corrected_artist_name
     elif (artist != corrected_artist_name):
@@ -69,7 +69,7 @@ def check_track(track_name, artist):
             print(f'no server response for {artist} {corrected_track_name}, error')
             exit()
         if (corrected_track != track):
-            response = input("Should song "+track_name+" be "+corrected_track_name+"? (y/N) ").lower()
+            response = input(f"Should song {track_name} be {corrected_track_name}? (y/N) ").lower()
             if (response == "y"):
                 track_name = corrected_track_name
                 track = corrected_track
@@ -80,7 +80,7 @@ def check_track(track_name, artist):
     try:
         track.get_listener_count()
     except pylast.WSError as e:
-        response = input("Track not found! Would you like to (I)gnore this track, edit the (T)rack title, or edit the (A)rtist?").lower()
+        response = input(f"Track {track_name} by Artist {artist} not found! Would you like to (I)gnore this track, edit the (T)rack title, or edit the (A)rtist?").lower()
         if (response == "t"):
             response = input("Type a better track name: ")
             return check_track(response, artist)
@@ -250,8 +250,17 @@ else:
 
 # Scrobble newSongs
 def scrobble_songs(newSongs):
+    # Add Element # to list
+    for (n, track) in enumerate(newSongs):
+        if len(track) == 4:
+            track.insert(0,n)
+        elif len(track) == 5:
+            track[0] = n
+        else:
+            print(f'Malformed track element {track}')
+
     # Print table of newSongs
-    print(tabulate.tabulate(newSongs, headers=["Song","Artist","Album","Listener Count"]))
+    print(tabulate.tabulate(newSongs, headers=["#","Song","Artist","Album","Listener Count"]))
 
     response = input("Scrobble these? (Y/n)").lower()
     if response == "n":
@@ -283,8 +292,8 @@ def scrobble_songs(newSongs):
         exit()
 
 def edit_song(newSongs, n):
-    (song, artist, album, count) = newSongs[n]
-    response = input('Edit [a]rtist, al[b]um, or [s]ong?').lower()
+    (_, song, artist, album, count) = newSongs[n]
+    response = input(f'Edit which element?\n[a]rtist {artist}\nal[b]um {album}\n[s]ong {song}').lower()
     if response == 'a':
         artist = input('New artist name:')
     elif response == 'b':
@@ -294,8 +303,7 @@ def edit_song(newSongs, n):
 
     response = input('[S]crobble or [e]dit this track further?').lower()
     if response == 'e':
-        edit_song(newSongs, n)
-        return
+        return edit_song(newSongs, n)
     else:
         (song, track) = check_track(song, artist)
         if not song:
