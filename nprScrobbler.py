@@ -39,12 +39,14 @@ def check_album(artist, album):
     if (album_object != corrected_album_object):
         response = input(f'Should album {album} be {corrected_album_name}? (y/N)').lower()
         if (response == "y"):
-            album =  corrected_album_name
+            album = corrected_album_name
     elif (album != corrected_album_name):
-        print(f"Suggested album name correction {corrected_album_name} does not affect scrobble, recommend ignoring.")
-        response = input(f'Should album {album} be {corrected_album_name}? (y/N)').lower()
-        if (response == "y"):
-            album =  corrected_album_name
+        print(f"Suggested album name correction {corrected_album_name} does not affect scrobble, recommend changing.")
+        response = input(f'Should album {album} be {corrected_album_name}? (Y/n)').lower()
+        if (response == "n"):
+            pass
+        else:
+            album = corrected_album_name
     return album
     
 
