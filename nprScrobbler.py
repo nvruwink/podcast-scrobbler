@@ -197,9 +197,9 @@ def get_tracks_guestdj(newMusic):
             (_, e) = e.split(". ",1)
         
         # Strip the artist name from before the colon or comma, leave the rest of the text in the buffer to be processed for track names
-        if ':' in e:
+        if ': ' in e:
             (artist, e) = e.split(": ",1)
-        elif ',' in e:
+        elif ', ' in e:
             (artist, e) = e.split(", ",1)
         else:
             artist = e
