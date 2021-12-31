@@ -292,7 +292,7 @@ def scrobble_songs(newSongs):
             exit()
         print("Scrobbling...")
         for s in newSongs:
-            network.scrobble(title=s[0], artist=s[1], album=s[2], timestamp=int(time.mktime(datetime.datetime.now().timetuple())))
+            network.scrobble(title=s[1], artist=s[2], album=s[3], timestamp=int(time.mktime(datetime.datetime.now().timetuple())))
         print("Succesful!")
         exit()
 
