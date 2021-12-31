@@ -55,6 +55,11 @@ def check_album(artist, album):
 
 # Check track - takes strings, returns duple of string track name and Track object to avoid hitting the server multiple times
 def check_track(track_name, artist):
+    if track_name.endswith(','):
+        response = input(f"Should song {track_name} be {track_name[0:-1]}? (Y/n) ").lower()
+        if (response != 'n'):
+            track_name = track_name[0:-1]
+
     track = pylast.Track(artist, track_name, network)
     corrected_track_name = track.get_correction()
     if not corrected_track_name:
