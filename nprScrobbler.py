@@ -150,6 +150,11 @@ def get_tracks_guestdj(newMusic):
     print("Looks like a guest DJ/new mix NPR site.")
     # Based on visual inspection of 1 result, all featured songs are listed as h3 elements with class="edTag"
     featuredList = newMusic.select('h3[class="edTag"]')
+    if not featuredList:
+        featuredList = newMusic.select('ol[class="edTag"]')
+    if not featuredList:
+        print('Error: No songs??!')
+        exit()
     print(featuredList)
 
     # Save each song in a list of lists. Form will be [[song0, artist0, album0],[song1, artist1, album1],...]
@@ -229,7 +234,7 @@ newMusic = bs4.BeautifulSoup(res.text, features="html.parser")
 
 # Select correct parser, then get list of tracks
 website_title = newMusic.select('title')[0].getText()
-if ("New Music Friday" in website_title) or ("Best New Albums" in website_title):
+if ("New Music Friday" in website_title) or ("Best New Albums" in website_title) or ('new-music-friday' in site):
     newSongs = get_tracks_friday(newMusic)
 elif ("npr.org" in site):
     # Assume GuestDJ article
