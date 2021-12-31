@@ -32,7 +32,10 @@ def check_album(artist, album):
     if (album == corrected_album_name):
         # No change, return immediately and don't waste server hits
         return album
-    corrected_album_object = network.get_album(artist, album)
+    elif album == "" and not corrected_album_name:
+        # Blank album
+        return album
+    corrected_album_object = network.get_album(artist, corrected_album_name)
     if (album_object != corrected_album_object):
         response = input(f'Should album {album} be {corrected_album_name}? (y/N)').lower()
         if (response == "y"):
